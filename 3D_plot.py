@@ -22,7 +22,13 @@ for i in range(0,len(cv_img)):
   
   """
   Iterating each pixel and appending locations where edge exits
+
+  get image (2d plane)
+  get angle of image (theta)
+    if angle overlap --> some x,z pixels will be ignored
+
   """
+
   for l in range(0,h):
     for j in range(0,w):
       b,g,r=cv_img[i][l,j]
@@ -45,43 +51,14 @@ for i in range(1,17):
   y_axis.append(s)
   s=s+1.5
 
-# y_cordinates = []
-
-# for i in range(len(x_cordinate)):
-#   y = []
-#   for j in range(len(x_cordinate[i])):
-#     # y_coordinates[i] = [[x*y_axis[i] for x in y] for y in  x_cordinate[i]]
-#     y.append(y_axis[i] * x_cordinate[i][j])
-
-#   y_cordinates.append(y)
 
 
 import math
 import numpy as np
 
 
-# def x_cor(x, y, theta):
-#   return round((x * np.cos( math.radians(theta) ))  + (y * np.sin( math.radians(theta) )), 3)
 
-# def y_cor(x, y, theta):
-#   return round(( -(x) * np.sin( math.radians(theta) ))  + (y * np.cos( math.radians(theta) )), 3)
-
-
-
-# for i in range(len(x_cordinate)):
-#   for j in range(len(x_cordinate[i])):
-#     # x_cordinate[i][j] = x_cor(x_cordinate[i][j], y_cordinates[i][j], i * 11)
-#     y_cordinates[i][j] = y_cor(x_cordinate[i][j], y_cordinates[i][j], i * 11)
-#     # y_coordinates[i] = [[x*y_axis[i] for x in y] for y in  x_cordinate[i]]
-#     # y.append(y_axis[i] * x_cordinate[i][j])
-
-
-
-
-
-# importing mplot3d toolkits
 from mpl_toolkits import mplot3d
-# import numpy as np
 import matplotlib.pyplot as plt
 
 fig = plt.figure()
@@ -94,46 +71,36 @@ test=[]
 
 print(f'length of y_axis: {len(y_axis)}')
 print(y_axis)
-# print(y_cordinates[1])
 print(f'length of x_axis: {len(x_cordinate)}')
-# print(x_cordinate[1])
 print(f'length of z_axis: {len(z_cordinate)}')
-# print(z_cordinate[1])
 
 for i in range(0,len(y_axis)):
-  print("list index",  str(i))
   ax.scatter(x_cordinate[i], y_axis[i], z_cordinate[i],  color='red',s=1)
-  # ax.scatter(x_cordinate[i], y_cordinates[i], z_cordinate[i], color='red',s=1)
 
   for k in range(len(x_cordinate[i])):
     test.append([x_cordinate[i][k],y_axis[i], z_cordinate[i][k]])
-    # test.append([x_cordinate[i][k], z_cordinate[i][k], y_cordinates[i][k]])
 
 
 # syntax for plotting
-ax.set_title('3d Scatter conical flask') 
-ax.set_xlabel('X Label')
-ax.set_ylabel('Y Label')
-ax.set_zlabel('Z Label')
-ax.view_init(30, -60)
-plt.show()
+# ax.set_title('3d Scatter conical flask') 
+# ax.set_xlabel('X Label')
+# ax.set_ylabel('Y Label')
+# ax.set_zlabel('Z Label')
+# ax.view_init(30, -60)
+# plt.show()
 
-'''cor=[]
-for i in range(len(y_axis)):
-  for k in range(len(x_cordinate[i])):
-    sub=[]
-    sub.append(x_cordinate[i][k])
-    sub.append(y_axis[i])
-    sub.append(x_cordinate[i][k])
-    cor.append(sub)'''
+
 # Pass numpy array to Open3D.o3d.geometry.PointCloud and visualize
-import open3d as o3d
-#xyz = np.random.rand(100, 3)
-pcd = o3d.geometry.PointCloud()
-pcd.points = o3d.utility.Vector3dVector(test)
-o3d.io.write_point_cloud('data2.ply', pcd)
-o3d.visualization.draw_geometries([pcd])
+# import open3d as o3d
+# #xyz = np.random.rand(100, 3)
+# pcd = o3d.geometry.PointCloud()
+# pcd.points = o3d.utility.Vector3dVector(test)
+# o3d.io.write_point_cloud('data2.ply', pcd)
+# o3d.visualization.draw_geometries([pcd])
 
+"""
+modeling on pyvista
+"""
 import numpy as np
 import pyvista as pv
 
@@ -141,6 +108,6 @@ import pyvista as pv
 cloud = pv.PolyData(test)
 #cloud.plot()
 
-volume = cloud.delaunay_3d(alpha=3.)
+volume = cloud.delaunay_3d(alpha=5., progress_bar=True)
 shell = volume.extract_geometry()
 shell.plot()
